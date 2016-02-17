@@ -32,14 +32,14 @@ module Main (
   variableLength n = f ((abs n) `mod` (2^28)) 0
     where
       f n k
-        | n < 128 = putWord8 (fromInteger (n + k))
+        | n < 0x40 = putWord8 (fromInteger (n + k))
         | otherwise =
-            f (n `div` 128) 128 >> putWord8 (fromInteger (n `mod` 128))
+            f (n `div` 0x40) 0x40 >> putWord8 (fromInteger (n `mod` 0x40))
 
   channelMessage :: Word8 -> Channel -> [Word8] -> Put
   channelMessage message c args = do
     putWord8 (message*0x10 + (c `mod` 0x10))
-    mapM_ (putWord8 . (`mod` 128)) args
+    mapM_ (putWord8 . (`mod` 0x40)) args
 
   encodeMessage :: (Delta, Channel, MidiMessage) -> Put
   encodeMessage (d,c,m) = variableLength d >> case m of
