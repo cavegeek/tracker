@@ -41,14 +41,17 @@ module Main (
     putWord8 (message*0x10 + (c `mod` 0x10))
     mapM_ (putWord8 . (`mod` 0x40)) args
 
+  controlMessage :: Channel -> Word8 -> Word8 -> Put
+  controlMessage c a b = channelMessage 0xB c [a,b]
+
   encodeMessage :: (Delta, Channel, MidiMessage) -> Put
   encodeMessage (d,c,m) = variableLength d >> case m of
     (NoteStart k v) -> channelMessage 0x9 c [k, v] 
     (NoteEnd k v) -> channelMessage 0x8 c [k, v]
     (Program p) -> channelMessage 0xC c [p]
     (Pitch n) -> channelMessage 0xE c [n]
-    (Pan n) -> channelMessage 0xB c [0xA, n]
-    (Volume n) -> channelMessage 0xB c [0x7, n]
+    (Pan n) -> controlMessage 0xA n
+    (Volume n) -> controlMessage 0x7 n
 
   encodeTrack :: MidiTrack -> Put
   encodeTrack = mapM_ encodeMessage
