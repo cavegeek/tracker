@@ -56,6 +56,13 @@ module Main (
   encodeTrack :: MidiTrack -> Put
   encodeTrack = mapM_ encodeMessage
 
+  systemMessage :: Word8 -> [Word8] -> Put
+  systemMessage message args = do
+    putWord8 0xFF
+    putWord8 message
+    putWord8 (fromInteger $ length args)
+    mapM_ (putWord8 . (`mod` 0x40)) args
+
   --
 
   type Note = Key
