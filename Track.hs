@@ -130,4 +130,8 @@ module Main (
       t2 = trackToMidi 0 0 8 (jacques2 ++ jacques2)
       t3 = trackToMidi 0 0 8 (jacques3 ++ jacques3)
 
-  main = B.putStr (runPut $ output jacques)
+  drums0 = (1, [[36],[38],[36,38],[38]])
+
+  drums = trackToMidi 0 9 16 (take 14 $ repeat drums0)
+
+  main = B.putStr (runPut $ output (jacques `combine` drums))
