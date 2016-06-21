@@ -69,9 +69,9 @@ module Main (
 
   partToMidi :: Channel -> Delay -> Part -> MidiTrack
   partToMidi c d p
-    = delayBy d (foldr (step d (\n -> stopNote c n 0)) [] p)
+    = foldr (step d (\n -> stopNote c n 0)) [] p
       `combine`
-      foldr (step d (\n -> startNote c n 64)) [] p
+      delayBy (negate d) (foldr (step d (\n -> startNote c n 64)) [] p)
     where
       step d _ [] rest = delayBy d rest
       step d f ns rest = zip (d:[0..]) (map f ns) ++ rest
