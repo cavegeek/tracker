@@ -2,8 +2,7 @@ module Track (
   Note,
   Tick,
   Part,
-  Track,
-  Word8
+  Track
   ) where
 
   import Data.Binary (Word8)
